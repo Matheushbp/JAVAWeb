@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmProdutos">
+			<p:dataTable id="tbProdutos" widgetVar="tabelaProdutos"
+				emptyMessage="Nenhum registro encontrado" value="#{MBProduto.itens}"
+				var="item" paginator="true" rows="7"
+				filteredValue="#{MBProduto.itensFiltrados}">
+
+				<f:facet name="header">
+					Lista de Produtos
+				</f:facet>
+
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBProduto.prepararNovo()}"
+						oncomplete="PF('digforNovo').show();"
+						update=":frmforNovo:pnforNovo :msgGlobal"></p:commandButton>
+				</f:facet>
+
+
+				<p:column headerText="Código" sortBy="#{item.codigo}"
+					filterBy="#{item.codigo}">
+					<h:outputText value="#{item.codigo}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash" />
+
+					<p:commandButton icon="ui-icon-pencil" />
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="digforExcluir" closable="false" resizable="false"
+			header="Excluir Produto" modal="true" appendTo="@(body)">
+			<h:form id="frmforExcluir">
+				<h:panelGrid id="pnforExcluir" columns="2">
+					<h:outputText value="Código" />
+					<h:outputText value="#{MBProduto.produto.codigo}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBProduto.Excluir()}"
+						oncomplete="PF('digforExcluir').hide(); PF('tabelaProdutos').clearFilters();"
+						update=":frmProdutos:tbProdutos :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('digforExcluir').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="digforEditar" closable="false" resizable="false"
+			header="Cadastrar Produto" modal="true" appendTo="@(body)">
+			<h:form id="frmforEditar">
+				<h:panelGrid id="pnforEditar" columns="2">
+					<h:outputText value="Código" />
+					<h:outputText value="#{MBProduto.produto.codigo}" />
+
+					<h:outputText value="Descricao" />
+					<h:inputText value="#{MBProduto.produto.descricao}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBProduto.Editar()}"
+						oncomplete="PF('digforEditar').hide(); PF('tabelaProdutos').clearFilters();"
+						update=":frmProdutos:tbProdutos :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('digforEditar').hide(); PF('tabelaProdutos').clearFilters()" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="digforNovo" closable="false" resizable="false"
+			header="Cadastrar Produtos" modal="true" appendTo="@(body)">
+			<h:form id="frmforNovo">
+				<h:panelGrid id="pnforNovo" coluns="2">
+					<p:outputLabel value="Descricao:" />
+					<h:inputText size="30" maxlength="50"
+						value="#{MBProduto.produto.descricao}" />
+					<p:outputLabel value="Quantidade" />
+					<h:inputText size="30" maxlength="50"
+						value="#{MBProduto.produto.quantidade}" />
+					<p:outputLabel value="Preço" />
+					<h:inputText size="30" maxlength="50"
+						value="#{MBProduto.produto.preco}" />
+					<p:outputLabel value="Fornecedor:" />
+					<p:selectOneMenu value="#{MBProduto.produto.fornecedores.codigo}">
+						<f:selectItems value="#{MBProduto.combofornecedores}" var="item"
+							itemValue="#{item.codigo}" itemLabel="#{item.descricao}">
+						</f:selectItems>
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p:commandButton value="Gravar" actionListener="#{MBProduto.novo()}"
+					oncomplete="PF('digforNovo').hide(); PF('tabelaProdutos').clearFilters();"
+					update=":frmProdutos:tbProdutos :msgGlobal" />
+				<p:commandButton value="cancelar" onclick="PF('digforNovo').hide();" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

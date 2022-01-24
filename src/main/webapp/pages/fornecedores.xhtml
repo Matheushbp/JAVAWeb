@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+>	
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmfornecedores">
+			<p:dataTable id="tbfornecedores"
+				widgetVar="tabelaFornecedores"
+				emptyMessage="Nenhum registro encontrado"
+				value="#{MBFornecedores.itens}" var="item" paginator="true" rows="7"
+				filteredValue="#{MBFornecedores.itensFiltrados}">
+
+				<f:facet name="header">
+					Lista de Objetos
+				</f:facet>
+
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBFornecedores.prepararNovo()}"
+						oncomplete="PF('digforNovo').show();"
+						update=":frmforNovo:pnforNovo"></p:commandButton>
+				</f:facet>
+				<p:column headerText="Código" sortBy="#{item.codigo}"
+					filterBy="#{item.codigo}">
+					<h:outputText value="#{item.codigo}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('digforExcluir').show();"
+						update=":frmforExcluir:pnforExcluir">
+						<f:setPropertyActionListener value="#{item}"
+							target="#{MBFornecedores.fornecedores}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('digforEditar').show();"
+						update=":frmforEditar:pnforEditar">
+					<f:setPropertyActionListener value="#{item}"
+						target="#{MBFornecedores.fornecedores}" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="digforExcluir" closable="false" resizable="false"
+			header="Cadastrar fornecedor" modal="true" appendTo="@(body)">
+			<h:form id="frmforExcluir">
+				<h:panelGrid id="pnforExcluir" columns="2">
+					<h:outputText value="Código" />
+					<h:outputText value="#{MBFornecedores.fornecedores.codigo}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBFornecedores.Excluir()}"
+						oncomplete="PF('digforExcluir').hide(); PF('tabelaFornecedores').clearFilters();"
+						update=":frmfornecedores:tbfornecedores :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('digforExcluir').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="digforEditar" closable="false" resizable="false"
+			header="Cadastrar fornecedor" modal="true" appendTo="@(body)">
+			<h:form id="frmforEditar">
+				<h:panelGrid id="pnforEditar" columns="2">
+					<h:outputText value="Código" />
+					<h:outputText value="#{MBFornecedores.fornecedores.codigo}" />
+
+					<h:outputText value="Descricao" />
+					<h:inputText value="#{MBFornecedores.fornecedores.descricao}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBFornecedores.Editar()}"
+						oncomplete="PF('digforEditar').hide(); PF('tabelaFornecedores').clearFilters();"
+						update=":frmfornecedores:tbfornecedores :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('digforEditar').hide(); PF('tabelaFornecedores').clearFilters()" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="digforNovo" closable="false" resizable="false"
+			header="Cadastrar fornecedor" modal="true" appendTo="@(body)">
+			<h:form id="frmforNovo">
+				<h:panelGrid id="pnforNovo" coluns="2">
+					<p:outputLabel value="Descricao:" />
+					<h:inputText size="30" maxlength="50"
+						value="#{MBFornecedores.fornecedores.descricao}" />
+				</h:panelGrid>
+				<p:commandButton value="Gravar"
+					actionListener="#{MBFornecedores.novo()}"
+					oncomplete="PF('digforNovo').hide(); PF('tabelaFornecedores').clearFilters();"
+					update=":frmfornecedores:tbfornecedores :msgGlobal" />
+				<p:commandButton value="cancelar" onclick="PF('digforNovo').hide();" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>
